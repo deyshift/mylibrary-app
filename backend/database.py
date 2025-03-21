@@ -5,6 +5,13 @@ from functools import wraps
 # In-memory rate-limiting storage
 rate_limit_cache = {}
 
+"""
+Adding a note that I want to be able to mark a book as read or unread.
+For our frontend display, the ideal would be for the user to search for all
+unread books in their library if they are trying to decide what to read. 
+Then to be able to mark it as currently reading or read once finished.
+"""
+
 def rate_limit(limit_seconds):
     """
     Decorator to enforce rate limiting for a function.
