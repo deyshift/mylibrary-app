@@ -1,0 +1,20 @@
+{
+    "extends": "./tsconfig.app.json", // Extend your app's tsconfig
+    "compilerOptions": {
+      "jsx": "react-jsx", // Enable JSX for test files
+      "types": ["jest", "@testing-library/jest-dom"], // Add Jest and Testing Library types
+      "module": "commonjs", // Jest uses CommonJS modules
+      "target": "ES2020", // Target modern JavaScript
+      "lib": ["ES2020", "DOM"], // Include DOM types for browser-based tests
+      "esModuleInterop": true, // Ensure compatibility with CommonJS modules
+      "isolatedModules": false, // Allow multiple files to be compiled together
+      "noEmit": true // Prevent emitting compiled files
+    },
+    "include": [
+      "src/**/*.test.ts",
+      "src/**/*.test.tsx",
+      "src/**/*.spec.ts",
+      "src/**/*.spec.tsx",
+      "src/setupTests.ts" // Include setupTests.ts if it exists
+    ]
+  }
