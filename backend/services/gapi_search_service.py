@@ -5,6 +5,9 @@ def search_books(query, max_results=40):
     """
     Search for books using the Google Books API and return results.
     """
+    if not query:
+        raise ValueError("Query parameter is required")
+    
     try:
         # Encode the query to handle spaces and special characters
         encoded_query = urllib.parse.quote(query)

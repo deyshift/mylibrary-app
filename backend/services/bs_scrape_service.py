@@ -111,14 +111,53 @@ def fetch_open_library_book_summary(book_url):
     return description_element.text.strip()
 
 
-def quote_of_the_day(author_name):
+import requests
+from bs4 import BeautifulSoup
+
+import requests
+from bs4 import BeautifulSoup
+
+def quote_of_the_day():
     """
-    Display a random quote from the author's Wikiquote page.
+    Fetch the quote of the day from Wikiquote's Main Page.
     """
-    quotes = fetch_quotes_from_wikiquote(author_name)
-    if quotes:
-        return random.choice(quotes)
-    return "No quotes available for this author."
+    url = "https://en.wikiquote.org/wiki/Main_Page"
+    try:
+        response = requests.get(url)
+        if response.status_code != 200:
+            return {"error": "Failed to fetch the quote of the day."}
+
+        soup = BeautifulSoup(response.text, "html.parser")
+
+        # Locate the "Quote of the Day" section
+        quote_section = soup.select_one("table[align='center'] td[align='center']")
+        if not quote_section:
+            return {"error": "No quote of the day found."}
+
+        # Extract the text of the quote
+        quote = quote_section.get_text(separator=" ").strip()
+
+        # Locate the author (if available)
+        author_section = soup.select_one("table[align='center'] td[style='font-size:smaller;']")
+        author = author_section.get_text(separator=" ").strip() if author_section else "Unknown Author"
+
+        # Clean up the quote and author
+        quote = " ".join(quote.split())  # Remove extra whitespace
+        author = " ".join(author.split())  # Remove extra whitespace
+
+        # Ensure the author name does not have extra "~" characters
+        if author.startswith("~") and author.endswith("~"):
+            author = author.strip("~").strip()
+
+        # Remove the author's name from the quote if it appears at the end
+        # This handles cases where the author's name is appended to the quote in the HTML
+        if quote.endswith(f"~ {author} ~"):
+            quote = quote[: -len(f"~ {author} ~")].strip()
+
+        # Return the quote and author as a dictionary
+        return {"quote": quote, "author": author}
+    except Exception as e:
+        return {"error": f"Error fetching the quote of the day: {e}"}
 
 
 def search_wikiquote_author(author_name):
