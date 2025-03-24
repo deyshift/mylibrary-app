@@ -17,6 +17,7 @@ function App() {
 
   const handleSearch = async () => {
     if (!query.trim()) {
+      // show personal library instead of search results
       alert("Please enter a search query.");
       return;
     }
