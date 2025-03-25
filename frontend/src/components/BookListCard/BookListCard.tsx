@@ -1,139 +1,117 @@
 import React, { useState } from "react";
-import { Book } from "../../types/book";
+import { BookListCardProps } from "../../types/props";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown"; // Import the dropdown icon
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 
-interface BookListCardProps {
-    book: Book;
-    handleAddBook: (book: Book, status: string) => void;
-}
 
 const BookListCard: React.FC<BookListCardProps> = ({ book, handleAddBook }) => {
-    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-    const [selectedStatus, setSelectedStatus] = useState<string>("Unread");
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
-    const handleMenuOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
-        setAnchorEl(event.currentTarget);
-    };
+  const handleMenuOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
 
-    const handleMenuClose = () => {
-        setAnchorEl(null);
-    };
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
 
-    const handleStatusSelect = (status: string) => {
-        setSelectedStatus(status);
-        handleAddBook(book, status); // Add the book with the selected status
-        handleMenuClose();
-    };
+  const handleStatusSelect = (status: string) => {
+    handleAddBook(book, status); // Pass the selected status to the parent handler
+    handleMenuClose();
+  };
 
-    return (
+  return (
+    <Box
+      data-testid="book-list-card"
+      sx={{
+        display: "flex",
+        flexDirection: "row",
+        gap: "16px",
+        alignItems: "flex-start",
+        border: "1px solid #ddd",
+        borderRadius: "8px",
+        padding: "16px",
+        backgroundColor: "#fff",
+      }}
+    >
+      {/* Cover Art */}
+      {book.cover_art ? (
         <Box
-            sx={{
-                display: "flex",
-                flexDirection: "row",
-                gap: "16px",
-                alignItems: "flex-start",
-                border: "1px solid #ddd",
-                borderRadius: "8px",
-                padding: "16px",
-                backgroundColor: "#fff",
-            }}
-        >
-            {/* Cover Art */}
-            {book.cover_art !== "No Cover Art Available" && (
-                <Box
-                    component="img"
-                    src={book.cover_art}
-                    alt={`${book.title} cover`}
-                    sx={{
-                        width: "140px",
-                        height: "200px",
-                        objectFit: "cover",
-                        borderRadius: "4px",
-                    }}
-                />
-            )}
+          component="img"
+          src={book.cover_art}
+          alt={`${book.title} cover`}
+          data-testid="book-cover"
+          sx={{
+            width: "140px",
+            height: "200px",
+            objectFit: "cover",
+            borderRadius: "4px",
+          }}
+        />
+      ) : (
+        <Box
+          component="img"
+          src="/placeholder.jpg" // Path to your placeholder image
+          alt="No Cover Art Available"
+          data-testid="book-cover"
+          sx={{
+            width: "140px",
+            height: "200px",
+            objectFit: "cover",
+            borderRadius: "4px",
+          }}
+        />
+      )}
 
-            {/* Book Details */}
-            <Box sx={{ flex: 1, textAlign: "left" }}>
-                <Typography variant="h5" color="text.primary" gutterBottom data-testid="title">
-                    {book.title}
-                </Typography>
-                <Typography variant="body2" color="text.primary" gutterBottom data-testid="authors">
-                    <strong>Authors:</strong> {book.authors.join(", ")}
-                </Typography>
-                <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={handleMenuOpen}
-                    sx={{ marginTop: "16px" }}
-                    endIcon={<ArrowDropDownIcon />} // Use the Material-UI dropdown icon
-                >
-                    Add to Library
-                </Button>
-                <Menu
-                    anchorEl={anchorEl}
-                    open={Boolean(anchorEl)}
-                    onClose={handleMenuClose}
-                    MenuListProps={{
-                        onMouseEnter: () => setAnchorEl(anchorEl), // Keep the menu open on hover
-                        onMouseLeave: handleMenuClose, // Close the menu when the mouse leaves
-                    }}
-                    sx={{
-                        "& .MuiPaper-root": {
-                            backgroundColor: "secondary.lighter", // Use an even lighter secondary color
-                            color: "text.primary", // Use the primary text color for better contrast
-                            minWidth: "140px", // Match the button width dynamically
-                            boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)", // Subtle shadow for visibility
-                        },
-                    }}
-                >
-                    <MenuItem
-                        onClick={() => handleStatusSelect("Read")}
-                        sx={{
-                            "&:hover": {
-                                backgroundColor: "secondary.lightest", // Use a very light secondary color on hover
-                            },
-                        }}
-                    >
-                        Read
-                    </MenuItem>
-                    <MenuItem
-                        onClick={() => handleStatusSelect("Currently Reading")}
-                        sx={{
-                            "&:hover": {
-                                backgroundColor: "secondary.lightest", // Use a very light secondary color on hover
-                            },
-                        }}
-                    >
-                        Currently Reading
-                    </MenuItem>
-                    <MenuItem
-                        onClick={() => handleStatusSelect("Unread")}
-                        sx={{
-                            "&:hover": {
-                                backgroundColor: "secondary.lightest", // Use a very light secondary color on hover
-                            },
-                        }}
-                    >
-                        Unread
-                    </MenuItem>
-                </Menu>
-                <Typography
-                    variant="body2"
-                    color="text.primary"
-                    sx={{ marginTop: "16px" }}
-                    data-testid="description"
-                >
-                    <strong>Description:</strong> {book.description}
-                </Typography>
-            </Box>
-        </Box>
-    );
+      {/* Book Details */}
+      <Box sx={{ flex: 1, textAlign: "left" }}>
+        <Typography variant="h5" color="text.primary" gutterBottom data-testid="book-title">
+          {book.title}
+        </Typography>
+        <Typography variant="body2" color="text.primary" gutterBottom data-testid="book-authors">
+          <strong>Authors:</strong> {book.authors.length > 0 ? book.authors.join(", ") : "Unknown Author"}
+        </Typography>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleMenuOpen}
+          sx={{ marginTop: "16px" }}
+          endIcon={<ArrowDropDownIcon />}
+          data-testid="add-to-library-button"
+        >
+          Add to Library
+        </Button>
+        <Menu
+          anchorEl={anchorEl}
+          open={Boolean(anchorEl)}
+          onClose={handleMenuClose}
+          data-testid="status-menu"
+        >
+          {["Read", "Currently Reading", "Unread"].map((status) => (
+            <MenuItem
+              key={status}
+              onClick={() => handleStatusSelect(status)}
+              data-testid={`status-option-${status.toLowerCase().replace(" ", "-")}`}
+            >
+              {status}
+            </MenuItem>
+          ))}
+        </Menu>
+        <Typography
+          variant="body2"
+          color="text.primary"
+          sx={{ marginTop: "16px" }}
+          data-testid="book-description"
+        >
+          <strong>Description:</strong> {book.description}
+        </Typography>
+      </Box>
+    </Box>
+  );
 };
 
 export default BookListCard;

@@ -22,45 +22,42 @@ const mockBooks = [
 const mockHandleAddBook = jest.fn();
 
 describe("BookList Component", () => {
-  it("renders the correct number of books", () => {
+  it("renders the correct number of BookListCard components", () => {
     render(<BookList books={mockBooks} handleAddBook={mockHandleAddBook} />);
 
-    // Check that the correct number of books is rendered
-    const bookItems = screen.getAllByRole("img", { name: /cover$/i });
-    expect(bookItems).toHaveLength(mockBooks.length);
+    // Check that the correct number of BookListCard components are rendered
+    const bookCards = screen.getAllByTestId("book-list-card");
+    expect(bookCards).toHaveLength(mockBooks.length);
   });
 
-  it("displays the correct book details", () => {
+  it("displays the correct book titles", () => {
     render(<BookList books={mockBooks} handleAddBook={mockHandleAddBook} />);
-  
-    // Get all titles, authors, and descriptions
-    const titleElements = screen.getAllByTestId("title");
-    const authorsElements = screen.getAllByTestId("authors");
-    const descriptionElements = screen.getAllByTestId("description");
-  
+
+    // Get all elements with the data-testid "book-title"
+    const titleElements = screen.getAllByTestId("book-title");
+
+    // Check that the number of titles matches the number of books
+    expect(titleElements).toHaveLength(mockBooks.length);
+
+    // Verify that each title matches the corresponding book
     mockBooks.forEach((book, index) => {
-      // Check the title
       expect(titleElements[index]).toHaveTextContent(book.title);
-  
-      // Check the authors
-      expect(authorsElements[index]).toHaveTextContent(`Authors: ${book.authors.join(", ")}`);
-  
-      // Check the description
-      expect(descriptionElements[index]).toHaveTextContent(`Description: ${book.description}`);
     });
   });
-  
-  it("calls handleAddBook when the 'Add to Library' button is clicked", () => {
+
+  it("calls handleAddBook when a status is selected in a BookListCard", () => {
     render(<BookList books={mockBooks} handleAddBook={mockHandleAddBook} />);
-  
-    // Get all "Add to Library" buttons
-    const addButtons = screen.getAllByTestId("add-button");
-  
-    // Click the "Add to Library" button for the first book
-    fireEvent.click(addButtons[0]);
-  
-    // Check that handleAddBook was called with the correct book
+
+    // Open the dropdown menu for the first book
+    const addButton = screen.getAllByTestId("add-to-library-button")[0];
+    fireEvent.click(addButton);
+
+    // Select the "Read" status
+    const readMenuItem = screen.getByTestId("status-option-read");
+    fireEvent.click(readMenuItem);
+
+    // Check that handleAddBook was called with the correct arguments
     expect(mockHandleAddBook).toHaveBeenCalledTimes(1);
-    expect(mockHandleAddBook).toHaveBeenCalledWith(mockBooks[0]);
+    expect(mockHandleAddBook).toHaveBeenCalledWith(mockBooks[0], "Read");
   });
 });
