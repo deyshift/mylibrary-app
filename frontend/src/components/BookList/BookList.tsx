@@ -47,7 +47,7 @@ const BookList: React.FC<BookListProps> = ({ books, handleAddBook }) => {
               {book.title}
             </Typography>
             <Typography variant="body2" color="text.primary" gutterBottom>
-              <strong>Authors:</strong> {book.authors.join(", ")}
+              <strong>Authors:</strong> {book.authors}
             </Typography>
             <Typography variant="body2" color="text.primary" sx={{ marginBottom: "16px" }}>
               <strong>Description:</strong> {book.description}

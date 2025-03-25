@@ -1,11 +1,11 @@
 from database.models import (
     add_book_to_library,
     get_all_books,
-    is_book_in_library,
+    is_book_in_library_by_title,
     update_book_status,
 )
 
-def add_book(title, authors, description, cover_art):
+def add_book(isbn, title, authors, description, cover_art):
     """
     Add a book to the library.
     Handles validation and checks before interacting with the database.
@@ -13,7 +13,7 @@ def add_book(title, authors, description, cover_art):
     if is_book_in_library(title):
         raise Exception(f"Book '{title}' already exists in your library!")
 
-    add_book_to_library(title, authors, description, cover_art)
+    add_book_to_library(isbn, title, authors, description, cover_art)
 
 
 def get_books():
@@ -27,7 +27,7 @@ def is_book_in_library(title):
     """
     Check if a book exists in the library by title.
     """
-    return is_book_in_library(title)
+    return is_book_in_library_by_title(title)  # Call the correct database function
 
 
 def update_book_status(title, status):
