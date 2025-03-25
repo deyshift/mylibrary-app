@@ -17,6 +17,7 @@ def add_book_endpoint():
     if not data:
         return jsonify({"error": "Request body is required"}), 400
 
+    isbn = data.get("isbn")
     title = data.get("title")
     authors = data.get("authors")
     description = data.get("description")
@@ -26,9 +27,11 @@ def add_book_endpoint():
         return jsonify({"error": "Title, authors, and description are required"}), 400
 
     try:
-        add_book(title, ", ".join(authors), description, cover_art)
-        return jsonify({"message": f"Book '{title}' added to your library!"}), 201
+        # Call the service layer to add the book
+        add_book(isbn, title, ", ".join(authors), description, cover_art)
+        return jsonify({"message": f"Book '{title}' with ISBN '{isbn}' added to your library!"}), 201
     except Exception as e:
+        print(f"Error adding book: {e}")
         return jsonify({"error": str(e)}), 500
 
 
@@ -36,6 +39,7 @@ def add_book_endpoint():
 def get_books_endpoint():
     """
     Retrieve all books from the library.
+    print("Fetching books from the database...")  # Debug log
     """
     try:
         books = get_books()

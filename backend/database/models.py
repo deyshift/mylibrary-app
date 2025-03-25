@@ -1,24 +1,23 @@
 import sqlite3
+import json
 from database.db import get_db_connection
 
-def add_book_to_library(title, authors, description, cover_art):
+def add_book_to_library(isbn, title, authors, description, cover_art):
     """
     Add a book to the library database if it doesn't already exist.
     """
-    validate_input(title, authors, description)  # Validate input
     try:
         with get_db_connection() as conn:
             cursor = conn.cursor()
             cursor.execute("""
-                INSERT INTO library (title, authors, description, cover_art)
-                VALUES (?, ?, ?, ?)
-            """, (title, authors, description, cover_art))
+                INSERT INTO library (isbn, title, authors, description, cover_art)
+                VALUES (?, ?, ?, ?, ?)
+            """, (isbn, title, authors, description, cover_art))
             conn.commit()
-        print(f"Book '{title}' added to your library!")
-    except sqlite3.IntegrityError:
-        print(f"Book '{title}' already exists in your library!")
-    except sqlite3.Error as e:
+        print(f"Book '{title}' with ISBN '{isbn}' added to your library!")
+    except Exception as e:
         print(f"Error adding book to library: {e}")
+        raise
 
 
 def get_all_books():
@@ -28,29 +27,42 @@ def get_all_books():
     try:
         with get_db_connection() as conn:
             cursor = conn.cursor()
-            cursor.execute("SELECT id, title, authors, description, status FROM library")
-            books = cursor.fetchall()
-        return books
-    except sqlite3.Error as e:
+            cursor.execute("""
+                SELECT isbn, title, authors, description, cover_art, status
+                FROM library
+            """)  # Explicitly select only the required columns
+            rows = cursor.fetchall()
+
+            # Convert rows to dictionaries
+            books = []
+            for row in rows:
+                books.append({
+                    "isbn": row["isbn"],
+                    "title": row["title"],
+                    "authors": row["authors"],
+                    "description": row["description"],
+                    "cover_art": row["cover_art"],
+                    "status": row["status"]
+                })
+
+            return books
+    except Exception as e:
         print(f"Error retrieving books: {e}")
-        return []
+        raise
 
 
-def is_book_in_library(title):
+def is_book_in_library_by_title(title):
     """
     Check if a book with the given title exists in the library database.
-    The search is case-insensitive.
     """
-    validate_input(title, None, None)  # Validate only the title
     try:
         with get_db_connection() as conn:
             cursor = conn.cursor()
-            cursor.execute("SELECT id, title, authors, description, status FROM library WHERE LOWER(title) = LOWER(?)", (title,))
-            book = cursor.fetchone()
-        return book
+            cursor.execute("SELECT 1 FROM library WHERE title = ?", (title,))
+            return cursor.fetchone() is not None
     except sqlite3.Error as e:
-        print(f"Error checking if book is in library: {e}")
-        return None
+        print(f"Error finding book: {e}")
+        return False
 
 
 def update_book_status(title, status):

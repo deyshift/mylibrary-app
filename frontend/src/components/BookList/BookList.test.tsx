@@ -4,16 +4,16 @@ import "@testing-library/jest-dom";
 
 const mockBooks = [
   {
-    id: 1,
+    isbn: "978-3-16-148410-0",
     title: "Book One",
-    authors: ["Author A", "Author B"],
+    authors: "Author A, Author B",
     description: "This is the description for Book One.",
     cover_art: "https://via.placeholder.com/140x200",
   },
   {
-    id: 2,
+    isbn: "978-1-23-456789-7",
     title: "Book Two",
-    authors: ["Author C"],
+    authors: "Author C",
     description: "This is the description for Book Two.",
     cover_art: "https://via.placeholder.com/140x200",
   },
@@ -41,7 +41,7 @@ describe("BookList Component", () => {
       expect(
         screen.getByText((_, element) => {
           const hasText = (node: Element) =>
-            node.textContent === `Authors: ${book.authors.join(", ")}`;
+            node.textContent === `Authors: ${book.authors}`;
           const elementHasText = hasText(element!);
           const childrenDontHaveText = Array.from(element!.children).every(
             (child) => !hasText(child)

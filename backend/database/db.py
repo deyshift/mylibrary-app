@@ -24,7 +24,6 @@ def rate_limit(limit_seconds):
     return decorator
 
 
-@rate_limit(1)  # Limit to 1 call per second
 def get_db_connection():
     """
     Create and return a database connection.
@@ -48,12 +47,13 @@ def initialize_database():
             cursor = conn.cursor()
             cursor.execute("""
                 CREATE TABLE IF NOT EXISTS library (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    title TEXT NOT NULL UNIQUE,  -- Enforce unique titles
-                    authors TEXT,
-                    description TEXT,
-                    cover_art TEXT,  -- URL for the book's cover art
-                    status TEXT DEFAULT 'unread'  -- Reading status: unread, read, or currently reading
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,  -- Database-generated unique ID
+                    isbn TEXT UNIQUE,                      -- ISBN as a unique field
+                    title TEXT NOT NULL,                   -- Book title
+                    authors TEXT,                          -- Authors as a comma-separated string
+                    description TEXT,                      -- Book description
+                    cover_art TEXT,                        -- URL for the book's cover art
+                    status TEXT DEFAULT 'unread'           -- Reading status: unread, read, or currently reading
                 )
             """)
             conn.commit()

@@ -31,12 +31,25 @@ def search_books(query, max_results=40):
         # Extract book details
         results = []
         for book in books:
-            title = book["volumeInfo"].get("title", "No Title")
-            authors = book["volumeInfo"].get("authors", ["Unknown Author"])
-            description = book["volumeInfo"].get("description", "No Description Available")
-            image_links = book["volumeInfo"].get("imageLinks", {})
+            volume_info = book.get("volumeInfo", {})
+            title = volume_info.get("title", "No Title")
+            authors = volume_info.get("authors", ["Unknown Author"])
+            description = volume_info.get("description", "No Description Available")
+            image_links = volume_info.get("imageLinks", {})
             cover_art = image_links.get("thumbnail", "No Cover Art Available")
+
+            # Extract ISBN
+            industry_identifiers = volume_info.get("industryIdentifiers", [])
+            isbn = "No ISBN Available"
+            for identifier in industry_identifiers:
+                if identifier.get("type") == "ISBN_13":
+                    isbn = identifier.get("identifier")
+                    break
+                elif identifier.get("type") == "ISBN_10" and isbn == "No ISBN Available":
+                    isbn = identifier.get("identifier")
+
             results.append({
+                "isbn": isbn,
                 "title": title,
                 "authors": authors,
                 "description": description,
