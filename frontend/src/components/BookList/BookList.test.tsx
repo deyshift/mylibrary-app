@@ -6,14 +6,14 @@ const mockBooks = [
   {
     isbn: "978-3-16-148410-0",
     title: "Book One",
-    authors: "Author A, Author B",
+    authors: ["Author A", "Author B"],
     description: "This is the description for Book One.",
     cover_art: "https://via.placeholder.com/140x200",
   },
   {
     isbn: "978-1-23-456789-7",
     title: "Book Two",
-    authors: "Author C",
+    authors: ["Author C"],
     description: "This is the description for Book Two.",
     cover_art: "https://via.placeholder.com/140x200",
   },
@@ -33,45 +33,32 @@ describe("BookList Component", () => {
   it("displays the correct book details", () => {
     render(<BookList books={mockBooks} handleAddBook={mockHandleAddBook} />);
   
-    // Check that each book's title, authors, and description are displayed
-    mockBooks.forEach((book) => {
-      expect(screen.getByText(book.title)).toBeInTheDocument();
+    // Get all titles, authors, and descriptions
+    const titleElements = screen.getAllByTestId("title");
+    const authorsElements = screen.getAllByTestId("authors");
+    const descriptionElements = screen.getAllByTestId("description");
   
-      // Use a custom matcher for the "Authors" text
-      expect(
-        screen.getByText((_, element) => {
-          const hasText = (node: Element) =>
-            node.textContent === `Authors: ${book.authors}`;
-          const elementHasText = hasText(element!);
-          const childrenDontHaveText = Array.from(element!.children).every(
-            (child) => !hasText(child)
-          );
-          return elementHasText && childrenDontHaveText;
-        })
-      ).toBeInTheDocument();
+    mockBooks.forEach((book, index) => {
+      // Check the title
+      expect(titleElements[index]).toHaveTextContent(book.title);
   
-      // Use a custom matcher for the "Description" text
-      expect(
-        screen.getByText((_, element) => {
-          const hasText = (node: Element) =>
-            node.textContent === `Description: ${book.description}`;
-          const elementHasText = hasText(element!);
-          const childrenDontHaveText = Array.from(element!.children).every(
-            (child) => !hasText(child)
-          );
-          return elementHasText && childrenDontHaveText;
-        })
-      ).toBeInTheDocument();
+      // Check the authors
+      expect(authorsElements[index]).toHaveTextContent(`Authors: ${book.authors.join(", ")}`);
+  
+      // Check the description
+      expect(descriptionElements[index]).toHaveTextContent(`Description: ${book.description}`);
     });
   });
-
+  
   it("calls handleAddBook when the 'Add to Library' button is clicked", () => {
     render(<BookList books={mockBooks} handleAddBook={mockHandleAddBook} />);
-
+  
+    // Get all "Add to Library" buttons
+    const addButtons = screen.getAllByTestId("add-button");
+  
     // Click the "Add to Library" button for the first book
-    const addButton = screen.getAllByRole("button", { name: /add to library/i })[0];
-    fireEvent.click(addButton);
-
+    fireEvent.click(addButtons[0]);
+  
     // Check that handleAddBook was called with the correct book
     expect(mockHandleAddBook).toHaveBeenCalledTimes(1);
     expect(mockHandleAddBook).toHaveBeenCalledWith(mockBooks[0]);
