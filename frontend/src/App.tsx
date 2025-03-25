@@ -46,7 +46,7 @@ function App() {
       const filteredResults = library.filter(
         (book) =>
           book.title.toLowerCase().includes(query.toLowerCase()) ||
-          (book.authors && book.authors.toLowerCase().includes(query.toLowerCase()))
+          (book.authors && book.authors.some((author) => author.toLowerCase().includes(query.toLowerCase()))) // Search in authors array
       );
       setResults(filteredResults);
     } else {
@@ -85,7 +85,6 @@ function App() {
       setLibrary((prevLibrary) => [...prevLibrary, book]);
     } catch (error) {
       console.error("Error adding book:", error);
-      alert("Error adding book. Please try again later.");
     }
   };
 

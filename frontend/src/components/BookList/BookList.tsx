@@ -43,19 +43,35 @@ const BookList: React.FC<BookListProps> = ({ books, handleAddBook }) => {
 
           {/* Book Details */}
           <Box sx={{ flex: 1, textAlign: "left" }}> {/* Explicitly set textAlign to left */}
-            <Typography variant="h5" component="div" gutterBottom>
+            <Typography
+              variant="body1"
+              color="text.primary"
+              gutterBottom
+              data-testid="title" // Add a test ID for the title
+            >
               {book.title}
             </Typography>
-            <Typography variant="body2" color="text.primary" gutterBottom>
-              <strong>Authors:</strong> {book.authors}
+            <Typography
+              variant="body2"
+              color="text.primary"
+              gutterBottom
+              data-testid="authors" // Generic test ID
+            >
+              <strong>Authors:</strong> {book.authors.join(", ")}
             </Typography>
-            <Typography variant="body2" color="text.primary" sx={{ marginBottom: "16px" }}>
+            <Typography
+              variant="body2"
+              color="text.primary"
+              sx={{ marginBottom: "16px" }}
+              data-testid="description" // Generic test ID
+            >
               <strong>Description:</strong> {book.description}
             </Typography>
             <Button
               variant="contained"
               color="primary"
               onClick={() => handleAddBook(book)}
+              data-testid="add-button" // Generic test ID
             >
               Add to Library
             </Button>

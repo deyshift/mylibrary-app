@@ -39,12 +39,14 @@ def add_book_endpoint():
 def get_books_endpoint():
     """
     Retrieve all books from the library.
-    print("Fetching books from the database...")  # Debug log
     """
     try:
         books = get_books()
-        return jsonify([dict(book) for book in books])  # Convert SQLite Row objects to dictionaries
+        if not books:
+            print("No books found in the library.")  # Debug log
+        return jsonify(books)  # Return an empty list if no books are found
     except Exception as e:
+        print(f"Error in /api/get_books: {e}")
         return jsonify({"error": str(e)}), 500
 
 

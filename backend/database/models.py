@@ -9,13 +9,15 @@ def add_book_to_library(isbn, title, authors, description, cover_art):
     try:
         with get_db_connection() as conn:
             cursor = conn.cursor()
+            # Convert authors list to JSON string
+            authors_json = json.dumps(authors) if isinstance(authors, list) else authors
             cursor.execute("""
                 INSERT INTO library (isbn, title, authors, description, cover_art)
                 VALUES (?, ?, ?, ?, ?)
-            """, (isbn, title, authors, description, cover_art))
+            """, (isbn, title, authors_json, description, cover_art))
             conn.commit()
-        print(f"Book '{title}' with ISBN '{isbn}' added to your library!")
-    except Exception as e:
+            print(f"Book '{title}' with ISBN '{isbn}' added to your library!")
+    except sqlite3.Error as e:
         print(f"Error adding book to library: {e}")
         raise
 
@@ -30,16 +32,16 @@ def get_all_books():
             cursor.execute("""
                 SELECT isbn, title, authors, description, cover_art, status
                 FROM library
-            """)  # Explicitly select only the required columns
+            """)
             rows = cursor.fetchall()
 
-            # Convert rows to dictionaries
+            # Convert rows to dictionaries and decode authors field
             books = []
             for row in rows:
                 books.append({
                     "isbn": row["isbn"],
                     "title": row["title"],
-                    "authors": row["authors"],
+                    "authors": json.loads(row["authors"]) if row["authors"] else [],  # Decode JSON
                     "description": row["description"],
                     "cover_art": row["cover_art"],
                     "status": row["status"]

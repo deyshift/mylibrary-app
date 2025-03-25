@@ -40,7 +40,7 @@ const BookCard: React.FC<BookCardProps> = ({ book }) => {
           {book.title}
         </Typography>
         <Typography variant="body2" color="text.secondary" noWrap>
-          {book.authors || "Unknown Author"}
+          {book.authors ? book.authors.join(", ") : "Unknown Author"}
         </Typography>
       </CardContent>
     </Card>
