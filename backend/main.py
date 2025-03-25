@@ -23,4 +23,4 @@ app.register_blueprint(gapi_bp)
 app.register_blueprint(bs_scrape_bp)
 
 if __name__ == "__main__":
-    app.run(debug=True)  # Start the Flask application
+    app.run(debug=True, port=5001)  # Start the Flask application

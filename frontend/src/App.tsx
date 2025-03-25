@@ -66,25 +66,26 @@ function App() {
     }
   };
 
-  const handleAddBook = async (book: Book) => {
+  const handleAddBook = async (book: Book, status: string) => {
     try {
       const response = await fetch(`${API_URL}/api/add_book`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(book),
+        body: JSON.stringify({ ...book, status }), // Include the status in the request body
       });
       if (!response.ok) {
         throw new Error("Failed to add book to library");
       }
       const data = await response.json();
       alert(data.message);
-
+  
       // Refresh the library after adding a book
-      setLibrary((prevLibrary) => [...prevLibrary, book]);
+      setLibrary((prevLibrary) => [...prevLibrary, { ...book, status }]);
     } catch (error) {
       console.error("Error adding book:", error);
+      alert("Failed to add book to library. Please try again.");
     }
   };
 
