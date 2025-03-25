@@ -1,82 +1,18 @@
 import React from "react";
 import { Book } from "../../types/book";
 import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
+import BookListCard from "../BookListCard/BookListCard";
 
 interface BookListProps {
   books: Book[];
-  handleAddBook: (book: Book) => void;
+  handleAddBook: (book: Book, status: string) => void;
 }
 
 const BookList: React.FC<BookListProps> = ({ books, handleAddBook }) => {
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: "16px", padding: "16px" }}>
       {books.map((book, index) => (
-        <Box
-          key={index}
-          sx={{
-            display: "flex",
-            flexDirection: "row",
-            gap: "16px",
-            alignItems: "flex-start",
-            border: "1px solid #ddd",
-            borderRadius: "8px",
-            padding: "16px",
-            backgroundColor: "#fff",
-          }}
-        >
-          {/* Cover Art */}
-          {book.cover_art !== "No Cover Art Available" && (
-            <Box
-              component="img"
-              src={book.cover_art}
-              alt={`${book.title} cover`}
-              sx={{
-                width: "140px",
-                height: "200px",
-                objectFit: "cover",
-                borderRadius: "4px",
-              }}
-            />
-          )}
-
-          {/* Book Details */}
-          <Box sx={{ flex: 1, textAlign: "left" }}> {/* Explicitly set textAlign to left */}
-            <Typography
-              variant="body1"
-              color="text.primary"
-              gutterBottom
-              data-testid="title" // Add a test ID for the title
-            >
-              {book.title}
-            </Typography>
-            <Typography
-              variant="body2"
-              color="text.primary"
-              gutterBottom
-              data-testid="authors" // Generic test ID
-            >
-              <strong>Authors:</strong> {book.authors.join(", ")}
-            </Typography>
-            <Typography
-              variant="body2"
-              color="text.primary"
-              sx={{ marginBottom: "16px" }}
-              data-testid="description" // Generic test ID
-            >
-              <strong>Description:</strong> {book.description}
-            </Typography>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => handleAddBook(book)}
-              data-testid="add-button" // Generic test ID
-            >
-              Add to Library
-            </Button>
-          </Box>
-        </Box>
+        <BookListCard key={index} book={book} handleAddBook={handleAddBook} />
       ))}
     </Box>
   );

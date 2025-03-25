@@ -2,21 +2,25 @@ import sqlite3
 import json
 from database.db import get_db_connection
 
-def add_book_to_library(isbn, title, authors, description, cover_art):
+def add_book_to_library(isbn, title, authors, description, cover_art, status="unread"):
     """
     Add a book to the library database if it doesn't already exist.
     """
+    valid_statuses = ["unread", "read", "currently reading"]
+    if status not in valid_statuses:
+        raise ValueError(f"Invalid status. Valid statuses are: {', '.join(valid_statuses)}")
+
     try:
         with get_db_connection() as conn:
             cursor = conn.cursor()
-            # Convert authors list to JSON string
-            authors_json = json.dumps(authors) if isinstance(authors, list) else authors
+            # Ensure authors is stored as a JSON array
+            authors_json = json.dumps(authors) if isinstance(authors, list) else json.dumps([authors])
             cursor.execute("""
-                INSERT INTO library (isbn, title, authors, description, cover_art)
-                VALUES (?, ?, ?, ?, ?)
-            """, (isbn, title, authors_json, description, cover_art))
+                INSERT INTO library (isbn, title, authors, description, cover_art, status)
+                VALUES (?, ?, ?, ?, ?, ?)
+            """, (isbn, title, authors_json, description, cover_art, status))
             conn.commit()
-            print(f"Book '{title}' with ISBN '{isbn}' added to your library!")
+            print(f"Book '{title}' with ISBN '{isbn}' added to your library with status '{status}'!")
     except sqlite3.Error as e:
         print(f"Error adding book to library: {e}")
         raise
@@ -24,7 +28,7 @@ def add_book_to_library(isbn, title, authors, description, cover_art):
 
 def get_all_books():
     """
-    Retrieve all books from the library database.
+    Retrieve all books from the library database, ordered alphabetically by the last name of the first author.
     """
     try:
         with get_db_connection() as conn:
@@ -34,22 +38,36 @@ def get_all_books():
                 FROM library
             """)
             rows = cursor.fetchall()
+            print(f"Raw rows retrieved from the database: {rows}")  # Debugging line
 
             # Convert rows to dictionaries and decode authors field
             books = []
             for row in rows:
+                authors = json.loads(row["authors"]) if row["authors"] else []
+                # Handle cases where the author has only one name or multiple authors
+                first_author = authors[0] if authors else ""  # Use the first author if available
+                last_name = first_author.split()[-1] if first_author else ""  # Extract last name or use empty string
                 books.append({
                     "isbn": row["isbn"],
                     "title": row["title"],
-                    "authors": json.loads(row["authors"]) if row["authors"] else [],  # Decode JSON
+                    "authors": authors,  # Decode JSON
                     "description": row["description"],
                     "cover_art": row["cover_art"],
-                    "status": row["status"]
+                    "status": row["status"],
+                    "sort_key": last_name.lower()  # Use lowercase last name for sorting
                 })
+
+            # Sort books by the last name of the first author
+            books.sort(key=lambda book: book["sort_key"])
+            print(f"Formatted books: {books}")  # Debugging line
+
+            # Remove the sort_key before returning the books
+            for book in books:
+                book.pop("sort_key", None)
 
             return books
     except Exception as e:
-        print(f"Error retrieving books: {e}")
+        print(f"Error retrieving books: {e}")  # Debugging line
         raise
 
 
@@ -91,6 +109,23 @@ def update_book_status(title, status):
             print(f"Updated the status of '{title}' to '{status}'.")
     except sqlite3.Error as e:
         print(f"Error updating book status: {e}")
+
+
+def delete_book_by_isbn(isbn):
+    """
+    Delete a book from the library database by its ISBN.
+    """
+    try:
+        with get_db_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("DELETE FROM library WHERE isbn = ?", (isbn,))
+            if cursor.rowcount == 0:
+                raise ValueError(f"No book found with ISBN '{isbn}'")
+            conn.commit()
+            print(f"Book with ISBN '{isbn}' deleted from the database.")  # Debugging line
+    except sqlite3.Error as e:
+        print(f"Error deleting book from library: {e}")
+        raise
 
 
 def validate_input(title, authors, description):
