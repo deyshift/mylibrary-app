@@ -3,12 +3,8 @@ import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
 import SearchIcon from "@mui/icons-material/Search";
 import Box from "@mui/material/Box";
+import { SearchBarProps } from "../../types/props";
 
-interface SearchBarProps {
-  query: string;
-  setQuery: (query: string) => void;
-  handleSearch: () => void;
-}
 
 const SearchBar: React.FC<SearchBarProps> = ({ query, setQuery, handleSearch }) => {
   return (
