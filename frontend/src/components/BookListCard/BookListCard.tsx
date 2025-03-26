@@ -35,7 +35,7 @@ const BookListCard: React.FC<BookListCardProps> = ({ book, handleAddBook }) => {
         border: "1px solid #ddd",
         borderRadius: "8px",
         padding: "16px",
-        backgroundColor: "#fff",
+        backgroundColor: "background.paper",
       }}
     >
       {/* Cover Art */}

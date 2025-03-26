@@ -30,6 +30,22 @@ export const addBook = async (book: any, status: string) => {
   return response.json();
 };
 
+export const updateBookStatus = async (title: string, status: string) => {
+  const response = await fetch(`${API_URL}/api/update_book_status`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ title, status }),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to update book status");
+  }
+
+  return response.json();
+};
+
 export const getQuoteOfTheDay = async () => {
   const response = await fetch(`${API_URL}/api/quote_of_the_day`);
   if (!response.ok) {

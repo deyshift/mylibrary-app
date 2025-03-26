@@ -6,21 +6,29 @@ export interface CarouselControlsProps {
 }
 
 export interface LibraryCarouselProps {
-    books: Book[]; // Assuming you have a Book type defined
-    bookRefs: React.MutableRefObject<Record<string, HTMLDivElement | null>>;
-    groupedBooks: Record<string, Book[]>; // Assuming groupedBooks is a map of books
-  }
+    books: Book[];
+    bookRefs: React.MutableRefObject<{ [key: string]: HTMLDivElement | null }>;
+    groupedBooks: { [key: string]: Book[] };
+    onBookClick: (book: Book) => void; // New prop for handling book clicks
+}
 
 export interface BookCardProps {
-  book: Book;
+    book: Book;
 }
 
 export interface BookListCardProps {
-  book: Book;
-  handleAddBook: (book: Book, status: string) => void;
+    book: Book;
+    handleAddBook: (book: Book, status: string) => void;
 }
 
 export interface BookListProps {
-  books: Book[];
-  handleAddBook: (book: Book, status: string) => void;
+    books: Book[];
+    handleAddBook: (book: Book, status: string) => void;
+}
+
+export interface BookInfoProps {
+    open: boolean;
+    onClose: () => void;
+    book: Book;
+    onUpdateStatus?: (status: string) => void;
 }
