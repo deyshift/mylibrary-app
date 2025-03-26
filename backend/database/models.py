@@ -43,9 +43,10 @@ def get_all_books():
             books = []
             for row in rows:
                 authors = json.loads(row["authors"]) if row["authors"] else []
-                # Handle cases where the author has only one name or multiple authors
+                # Use the last word in the first author's name as the last name
                 first_author = authors[0] if authors else ""  # Use the first author if available
-                last_name = first_author.split()[-1] if first_author else ""  # Extract last name or use empty string
+                last_name = first_author.split()[-1] if first_author else ""  # Get the last word
+
                 books.append({
                     "isbn": row["isbn"],
                     "title": row["title"],
