@@ -1,12 +1,19 @@
 import random
 from bs4 import BeautifulSoup
 import requests
+from rapidfuzz import fuzz
 
 
 def search_open_library_author(author_name):
     """
     Search Open Library for an author and return the URL of their profile page.
+    Handles cases where initials are separated by spaces or periods and reversed names.
     """
+    # Normalize the author name
+    normalized_name = author_name.replace(".", "").strip()  # Remove periods
+    normalized_name = " ".join(normalized_name.split())  # Ensure single spaces between words
+
+    # Construct the search URL using the normalized name
     search_url = f"https://openlibrary.org/search?q={author_name.replace(' ', '+')}"
     response = requests.get(search_url)
     if response.status_code != 200:
@@ -14,14 +21,40 @@ def search_open_library_author(author_name):
 
     soup = BeautifulSoup(response.text, "html.parser")
 
-    # Locate the first author link in the search results
-    first_result = soup.select_one(".bookauthor a")
-    if not first_result:
-        return None  # No author found
+    # Locate all author links in the search results
+    author_results = soup.select(".bookauthor a")
+    if not author_results:
+        print("No authors found in the response.")  # Log if no authors are found
+        return None
 
-    # Construct the full URL for the author's profile page
-    author_url = f"https://openlibrary.org{first_result['href']}"
-    return author_url
+    # Split the normalized name into parts for better matching
+    name_parts = normalized_name.lower().split()
+
+    # Iterate through all results and find the best match
+    best_match = None
+    highest_score = 0
+    for author_link in author_results:
+        author_name_text = author_link.text.strip()
+        author_name_lower = author_name_text.lower()
+
+        # Calculate a base fuzzy match score
+        score = fuzz.partial_ratio(normalized_name.lower(), author_name_lower)
+
+        # Boost the score if all parts of the input name are present in the result
+        if all(part in author_name_lower for part in name_parts):
+            score += 20  # Boost score for containing all parts of the name
+
+        if score > highest_score:
+            highest_score = score
+            best_match = author_link
+
+    # If a sufficiently good match is found, return the author's profile URL
+    if best_match and highest_score > 70:  # Lower the threshold slightly to account for reversed names
+        author_url = f"https://openlibrary.org{best_match['href']}"
+        return author_url
+
+    print("No sufficiently good match found.")  # Log if no good match is found
+    return None
 
 
 def fetch_open_library_author_bio(author_name):
@@ -41,6 +74,7 @@ def fetch_open_library_author_bio(author_name):
     response = requests.get(author_url)
     if response.status_code != 200:
         raise Exception("Failed to fetch Open Library author page.")
+        
 
     soup = BeautifulSoup(response.text, "html.parser")
 
