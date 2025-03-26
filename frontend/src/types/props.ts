@@ -32,3 +32,9 @@ export interface BookInfoProps {
     book: Book;
     onUpdateStatus?: (status: string) => void;
 }
+
+export interface AuthorInfoProps {
+    isOpen: boolean;
+    onClose: () => void;
+    authorName: string;
+}
