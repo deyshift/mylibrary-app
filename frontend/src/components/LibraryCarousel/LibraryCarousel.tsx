@@ -4,7 +4,7 @@ import { LibraryCarouselProps } from "../../types/props";
 import BookCard from "../BookCard/BookCard";
 import CarouselControls from "../CarouselControls/CarouselControls";
 
-const LibraryCarousel: React.FC<LibraryCarouselProps> = ({ books }) => {
+const LibraryCarousel: React.FC<LibraryCarouselProps> = ({ books, bookRefs, groupedBooks }) => {
   const scrollLeft = () => {
     const container = document.querySelector(".carousel-container");
     if (container) {
@@ -36,9 +36,25 @@ const LibraryCarousel: React.FC<LibraryCarouselProps> = ({ books }) => {
           scrollbarWidth: "none", // Hides the scrollbar in Firefox
         }}
       >
-        {books.map((book) => (
-          <BookCard key={book.isbn} book={book} />
-        ))}
+        {books.map((book) => {
+          // Assign refs for the first book in each range
+          const range = Object.keys(groupedBooks).find((key) =>
+            groupedBooks[key].includes(book)
+          );
+
+          return (
+            <Box
+              key={book.isbn}
+              ref={(el) => {
+                if (range && !bookRefs.current[range] && el instanceof HTMLDivElement) {
+                  bookRefs.current[range] = el; // Assign ref to the first book in the range
+                }
+              }}
+            >
+              <BookCard book={book} />
+            </Box>
+          );
+        })}
       </Box>
 
       {/* Buttons Below the Carousel */}
