@@ -65,13 +65,19 @@ def search_book():
 @bs_scrape_bp.route("/api/fetch_book_summary", methods=["GET"])
 def fetch_book_summary():
     """
-    Fetch a book's summary from Open Library.
+    Fetch a book's summary from Open Library using the book title.
     """
-    book_url = request.args.get("book_url")
-    if not book_url:
-        return jsonify({"error": "Book URL is required"}), 400
+    book_title = request.args.get("book_title")
+    if not book_title:
+        return jsonify({"error": "Book title is required"}), 400
 
     try:
+        # Step 1: Search for the book URL using the title
+        book_url = search_open_library_book(book_title)
+        if not book_url:
+            return jsonify({"message": "Book not found"}), 404
+
+        # Step 2: Fetch the book summary using the book URL
         summary = fetch_open_library_book_summary(book_url)
         return jsonify({"summary": summary}), 200
     except Exception as e:

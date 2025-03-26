@@ -4,7 +4,7 @@ import { LibraryCarouselProps } from "../../types/props";
 import BookCard from "../BookCard/BookCard";
 import CarouselControls from "../CarouselControls/CarouselControls";
 
-const LibraryCarousel: React.FC<LibraryCarouselProps> = ({ books, bookRefs, groupedBooks }) => {
+const LibraryCarousel: React.FC<LibraryCarouselProps> = ({ books, bookRefs, groupedBooks, onBookClick }) => {
   const scrollLeft = () => {
     const container = document.querySelector(".carousel-container");
     if (container) {
@@ -50,6 +50,8 @@ const LibraryCarousel: React.FC<LibraryCarouselProps> = ({ books, bookRefs, grou
                   bookRefs.current[range] = el; // Assign ref to the first book in the range
                 }
               }}
+              onClick={() => onBookClick(book)} // Handle book click
+              sx={{ cursor: "pointer" }} // Add pointer cursor for clickable books
             >
               <BookCard book={book} />
             </Box>

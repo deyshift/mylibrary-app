@@ -28,8 +28,8 @@ const QuoteOfTheDay: React.FC = () => {
     <Box
       sx={{
         width: "100%", // Full width of the page
-        backgroundColor: "primary.light",
-        color: "primary.contrastText",
+        backgroundColor: "background.paper",
+        color: "text.primary",
         padding: "12px 16px",
         textAlign: "center",
         borderBottom: "2px solid",
@@ -56,7 +56,7 @@ const QuoteOfTheDay: React.FC = () => {
           </Typography>
           <Typography
             variant="body2"
-            color="primary.contrastText"
+            color="text.primary"
             data-testid="quote-author"
           >
             - {quoteData?.author}

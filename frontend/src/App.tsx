@@ -12,6 +12,7 @@ import { getBooks, searchBooks, addBook } from "./services/api/apiService";
 import QuoteOfTheDay from "./components/QuoteOfTheDay/QuoteOfTheDay";
 import SearchBar from "./components/SearchBar/SearchBar";
 import BookList from "./components/BookList/BookList";
+import BookInfo from "./components/BookInfo/BookInfo"; // Import the new BookInfo component
 
 function App() {
   const [query, setQuery] = useState<string>("");
@@ -20,6 +21,9 @@ function App() {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [searchMode, setSearchMode] = useState<"library" | "api">("api"); // Tabs state
   const resultsPerPage = 10;
+
+  const [selectedBook, setSelectedBook] = useState<Book | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const bookRefs = useRef<Record<string, HTMLDivElement | null>>({}); // Refs for each range
 
@@ -35,6 +39,33 @@ function App() {
 
     fetchLibrary();
   }, []);
+
+  const handleBookClick = (book: Book) => {
+    setSelectedBook(book);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedBook(null);
+  };
+
+  // Update the status of a book in the library
+  const handleUpdateStatus = (status: string) => {
+    if (selectedBook) {
+      // Update the status in the library state
+      setLibrary((prevLibrary) =>
+        prevLibrary.map((book) =>
+          book.title === selectedBook.title ? { ...book, status } : book
+        )
+      );
+
+      // Update the selectedBook's status to reflect the change in the modal
+      setSelectedBook((prevBook) =>
+        prevBook ? { ...prevBook, status } : null
+      );
+    }
+  };
 
   // Group books into alphabet ranges using the utility function
   const groupedBooks = useMemo(() => {
@@ -109,7 +140,20 @@ function App() {
               <AlphabetNav ranges={Object.keys(groupedBooks)} onRangeClick={handleRangeClick} />
             )}
             {/* Library Carousel */}
-            <LibraryCarousel books={library} bookRefs={bookRefs} groupedBooks={groupedBooks} />
+            <LibraryCarousel 
+              books={library} 
+              bookRefs={bookRefs} 
+              groupedBooks={groupedBooks}
+              onBookClick={handleBookClick}
+            />
+            {selectedBook && (
+              <BookInfo
+                open={isModalOpen}
+                onClose={handleCloseModal}
+                book={selectedBook} // Pass the entire book object
+                onUpdateStatus={handleUpdateStatus} // Pass the handler to update status
+              />
+            )}
           </>
         ) : (
           <Typography>No books in your library yet.</Typography>
@@ -131,7 +175,7 @@ function App() {
           <>
             <BookList books={paginatedResults} handleAddBook={handleAddBook} />
             {results.length > resultsPerPage && (
-              <Box>
+              <Box sx={{ display: "flex", justifyContent: "center", gap: 1, mt: 2 }}>
                 {Array.from({ length: Math.ceil(results.length / resultsPerPage) }, (_, index) => (
                   <Button
                     key={index}

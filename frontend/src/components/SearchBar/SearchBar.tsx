@@ -12,8 +12,16 @@ interface SearchBarProps {
 
 const SearchBar: React.FC<SearchBarProps> = ({ query, setQuery, handleSearch }) => {
   return (
-    <Box sx={{ display: "flex", justifyContent: "center", padding: "16px" }}>
-      <Box sx={{ width: "100%", maxWidth: "1200px" }}> {/* Constrain the width */}
+    <Box sx={{ 
+      display: "flex", 
+      justifyContent: "center", 
+      padding: "16px"
+       }}>
+      <Box sx={{ 
+        width: "100%",
+         maxWidth: "1200px",
+         backgroundColor: "background.paper"
+         }}> {/* Constrain the width */}
         <form
           role="form"
           onSubmit={(e) => {

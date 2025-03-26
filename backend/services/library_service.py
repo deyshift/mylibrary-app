@@ -2,7 +2,7 @@ from database.models import (
     add_book_to_library,
     get_all_books,
     is_book_in_library_by_title,
-    update_book_status,
+    update_book_status_in_db,
     delete_book_by_isbn,
 )
 
@@ -36,10 +36,11 @@ def update_book_status(title, status):
     Update the reading status of a book in the library.
     """
     valid_statuses = ["unread", "read", "currently reading"]
+    status = status.lower()
     if status not in valid_statuses:
         raise ValueError(f"Invalid status. Valid statuses are: {', '.join(valid_statuses)}")
 
-    update_book_status(title, status)
+    update_book_status_in_db(title, status)
 
 
 def delete_book(isbn):

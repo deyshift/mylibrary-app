@@ -83,7 +83,7 @@ def is_book_in_library_by_title(title):
         return False
 
 
-def update_book_status(title, status):
+def update_book_status_in_db(title, status):
     """
     Update the reading status of a book in the library.
     """
