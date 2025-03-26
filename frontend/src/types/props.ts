@@ -19,6 +19,7 @@ export interface BookCardProps {
 export interface BookListCardProps {
     book: Book;
     handleAddBook: (book: Book, status: string) => void;
+    isInLibrary?: boolean;
 }
 
 export interface BookListProps {

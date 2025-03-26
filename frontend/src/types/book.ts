@@ -5,4 +5,5 @@ export interface Book {
   description: string;
   cover_art?: string;
   status?: string;
+  isInLibrary?: boolean;
 }
