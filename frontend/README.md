@@ -11,6 +11,7 @@ MyLibrary is a personal library management app that I built to help users organi
 - **Carousel Bookshelf**: Browse your library with a smooth scrollin feature or jump to different sections organized alphabetically.
 - **Track Reading**: Keep track of the books you have read, are currently reading, and plan to read.
 - **Simple Search**: Quickly find books in the Google Books API or your personal library using a basic search feature.
+- **Quote of the Day**: Fetches the quote of the day from Open Library.
 
 ---
 
@@ -26,7 +27,7 @@ MyLibrary is a personal library management app that I built to help users organi
 - **Python**: The core language for backend development.
 - **Flask**: A lightweight framework for building the backend API.
 - **SQLite**: A simple and efficient database for storing books and user data.
-- **Beautiful Soup**: For web scraping additional book data.
+- **Beautiful Soup**: For web scraping additional book data, author bios, and quote of the day.
 
 ### APIs
 - **Google Books API**: Fetches detailed book information, including title, author, and publication date.
