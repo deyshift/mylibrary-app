@@ -15,6 +15,7 @@ const BookList: React.FC<BookListProps> = ({ books, handleAddBook }) => {
           key={index}
           book={book}
           handleAddBook={handleAddBook}
+          isInLibrary={book.isInLibrary} // Pass the isInLibrary flag to BookListCard
           data-testid={`book-list-card-${index}`}
         />
       ))}

@@ -185,23 +185,29 @@ function App() {
         <SearchBar query={query} setQuery={setQuery} handleSearch={handleSearch} />
 
         {results.length > 0 && (
-          <>
-            <BookList books={paginatedResults} handleAddBook={handleAddBook} />
-            {results.length > resultsPerPage && (
-              <Box sx={{ display: "flex", justifyContent: "center", gap: 1, mt: 2 }}>
-                {Array.from({ length: Math.ceil(results.length / resultsPerPage) }, (_, index) => (
-                  <Button
-                    key={index}
-                    onClick={() => handlePageChange(index + 1)}
-                    variant={index + 1 === currentPage ? "contained" : "outlined"}
-                  >
-                    {index + 1}
-                  </Button>
-                ))}
-              </Box>
-            )}
-          </>
-        )}
+  <>
+    <BookList
+      books={paginatedResults.map((book) => ({
+        ...book,
+        isInLibrary: library.some((libraryBook) => libraryBook.isbn === book.isbn), // Check if the book is in the library
+      }))}
+      handleAddBook={handleAddBook}
+    />
+    {results.length > resultsPerPage && (
+      <Box sx={{ display: "flex", justifyContent: "center", gap: 1, mt: 2 }}>
+        {Array.from({ length: Math.ceil(results.length / resultsPerPage) }, (_, index) => (
+          <Button
+            key={index}
+            onClick={() => handlePageChange(index + 1)}
+            variant={index + 1 === currentPage ? "contained" : "outlined"}
+          >
+            {index + 1}
+          </Button>
+        ))}
+      </Box>
+    )}
+  </>
+)}
       </Box>
     </ThemeProvider>
   );
