@@ -84,15 +84,27 @@ function App() {
     if (!query.trim()) {
       return;
     }
-
+  
     if (searchMode === "library") {
-      // Search in the library
-      const filteredResults = library.filter(
+      // Search for the matching book in the library
+      const matchingBook = library.find(
         (book) =>
           book.title.toLowerCase().includes(query.toLowerCase()) ||
           (book.authors && book.authors.some((author) => author.toLowerCase().includes(query.toLowerCase())))
       );
-      setResults(filteredResults);
+  
+      if (matchingBook) {
+        // Scroll directly to the matching book
+        const bookRef = bookRefs.current[matchingBook.title];
+        if (bookRef) {
+          bookRef.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+  
+        // Open the modal for the matching book
+        handleBookClick(matchingBook);
+      } else {
+        alert("No matching book found in your library.");
+      }
     } else {
       // Search in the API
       try {
@@ -111,7 +123,8 @@ function App() {
       alert(data.message);
 
       // Refresh the library after adding a book
-      setLibrary((prevLibrary) => [...prevLibrary, { ...book, status }]);
+      const updatedLibrary = await getBooks();
+      setLibrary(updatedLibrary);
     } catch (error) {
       console.error("Error adding book:", error);
       alert("Failed to add book to library. Please try again.");

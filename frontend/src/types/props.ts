@@ -38,3 +38,9 @@ export interface AuthorInfoProps {
     onClose: () => void;
     authorName: string;
 }
+
+export interface SearchBarProps {
+    query: string;
+    setQuery: (query: string) => void;
+    handleSearch: () => void;
+}
