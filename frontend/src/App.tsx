@@ -1,31 +1,32 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import "./App.css";
 import { Book } from "./types/book";
-import BookList from "./components/BookList/BookList";
-import SearchBar from "./components/SearchBar/SearchBar";
 import LibraryCarousel from "./components/LibraryCarousel/LibraryCarousel";
+import AlphabetNav from "./components/AlphabetNav/AlphabetNav";
+import { groupBooksByRange } from "./utils/groupBooksByRange"; // Import the utility function
 import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import theme from "./theme/theme";
-import { Box, Button, Typography, Tabs, Tab } from "@mui/material";
+import { Box, Typography, Tabs, Tab, Button } from "@mui/material";
+import { getBooks, searchBooks, addBook } from "./services/api/apiService";
+import QuoteOfTheDay from "./components/QuoteOfTheDay/QuoteOfTheDay";
+import SearchBar from "./components/SearchBar/SearchBar";
+import BookList from "./components/BookList/BookList";
 
 function App() {
-  const API_URL = import.meta.env.VITE_API_URL || "";
   const [query, setQuery] = useState<string>("");
   const [results, setResults] = useState<Book[]>([]);
   const [library, setLibrary] = useState<Book[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [searchMode, setSearchMode] = useState<"library" | "api">("library"); // Tabs state
+  const [searchMode, setSearchMode] = useState<"library" | "api">("api"); // Tabs state
   const resultsPerPage = 10;
+
+  const bookRefs = useRef<Record<string, HTMLDivElement | null>>({}); // Refs for each range
 
   useEffect(() => {
     const fetchLibrary = async () => {
       try {
-        const response = await fetch(`${API_URL}/api/get_books`);
-        if (!response.ok) {
-          throw new Error("Failed to fetch library");
-        }
-        const data: Book[] = await response.json();
+        const data = await getBooks();
         setLibrary(data);
       } catch (error) {
         console.error("Error fetching library:", error);
@@ -33,11 +34,23 @@ function App() {
     };
 
     fetchLibrary();
-  }, [API_URL]);
+  }, []);
+
+  // Group books into alphabet ranges using the utility function
+  const groupedBooks = useMemo(() => {
+    const grouped = groupBooksByRange(library);
+    return grouped;
+  }, [library]);
+
+  const handleRangeClick = (range: string) => {
+    const section = bookRefs.current[range];
+    if (section) {
+      section.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  };
 
   const handleSearch = async () => {
     if (!query.trim()) {
-      alert("Please enter a search query.");
       return;
     }
 
@@ -46,41 +59,26 @@ function App() {
       const filteredResults = library.filter(
         (book) =>
           book.title.toLowerCase().includes(query.toLowerCase()) ||
-          (book.authors && book.authors.some((author) => author.toLowerCase().includes(query.toLowerCase()))) // Search in authors array
+          (book.authors && book.authors.some((author) => author.toLowerCase().includes(query.toLowerCase())))
       );
       setResults(filteredResults);
     } else {
       // Search in the API
       try {
-        const response = await fetch(`${API_URL}/search_books?query=${query}`);
-        if (!response.ok) {
-          throw new Error("Failed to fetch books");
-        }
-        const data: Book[] = await response.json();
+        const data = await searchBooks(query);
         setResults(data);
         setCurrentPage(1);
       } catch (error) {
         console.error("Error fetching books:", error);
-        alert("Error fetching books. Please try again later.");
       }
     }
   };
 
   const handleAddBook = async (book: Book, status: string) => {
     try {
-      const response = await fetch(`${API_URL}/api/add_book`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ ...book, status }), // Include the status in the request body
-      });
-      if (!response.ok) {
-        throw new Error("Failed to add book to library");
-      }
-      const data = await response.json();
+      const data = await addBook(book, status);
       alert(data.message);
-  
+
       // Refresh the library after adding a book
       setLibrary((prevLibrary) => [...prevLibrary, { ...book, status }]);
     } catch (error) {
@@ -101,10 +99,18 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
+      <QuoteOfTheDay />
       <Box className="App">
-        <h1>My Library</h1>
+        <h2>Browse Your Shelves</h2>
         {library.length > 0 ? (
-          <LibraryCarousel books={library} />
+          <>
+            {/* Conditionally render AlphabetNav only if there are more than 50 books */}
+            {library.length > 50 && (
+              <AlphabetNav ranges={Object.keys(groupedBooks)} onRangeClick={handleRangeClick} />
+            )}
+            {/* Library Carousel */}
+            <LibraryCarousel books={library} bookRefs={bookRefs} groupedBooks={groupedBooks} />
+          </>
         ) : (
           <Typography>No books in your library yet.</Typography>
         )}

@@ -38,7 +38,6 @@ def get_all_books():
                 FROM library
             """)
             rows = cursor.fetchall()
-            print(f"Raw rows retrieved from the database: {rows}")  # Debugging line
 
             # Convert rows to dictionaries and decode authors field
             books = []
@@ -59,7 +58,6 @@ def get_all_books():
 
             # Sort books by the last name of the first author
             books.sort(key=lambda book: book["sort_key"])
-            print(f"Formatted books: {books}")  # Debugging line
 
             # Remove the sort_key before returning the books
             for book in books:

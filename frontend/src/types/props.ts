@@ -6,8 +6,10 @@ export interface CarouselControlsProps {
 }
 
 export interface LibraryCarouselProps {
-    books: Book[];
-}
+    books: Book[]; // Assuming you have a Book type defined
+    bookRefs: React.MutableRefObject<Record<string, HTMLDivElement | null>>;
+    groupedBooks: Record<string, Book[]>; // Assuming groupedBooks is a map of books
+  }
 
 export interface BookCardProps {
   book: Book;
