@@ -1,6 +1,6 @@
 # MyLibrary - A Personal Library Web Application
 
-MyLibrary is a personal library web application I built to refine my full-stack development skills with Python and React (TypeScript). It features a modern, intuitive UI that allows users to search for books, add them to their digital library, and track their reading progress. The app also includes additional features like a daily random quote and author bios, enhancing the reading experience. Data is sourced via external APIs and web scraping with BeautifulSoup from public resources like Wikiquote and Open Library. The frontend is built with React and Vite for fast performance and efficient development, while the backend, powered by SQLite, manages book collections and user interactions seamlessly.
+MyLibrary is a personal library web application I built to refine my full-stack development skills with Python and React (TypeScript). It features a modern, intuitive UI that allows users to search for books, add them to their digital library, and track their reading progress. The app also includes additional features like a daily random quote and author bios, enhancing the reading experience. Data is sourced via external APIs and web scraping with BeautifulSoup from public resources like Wikiquote and Open Library. The frontend is built with React and Vite for fast performance and efficient development, while the backend, powered by SQLite and a RESTful API, manages book collections and user interactions seamlessly.
 
 ---
 
