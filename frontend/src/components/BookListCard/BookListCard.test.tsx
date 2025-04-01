@@ -12,6 +12,12 @@ const mockBook = {
 
 const mockHandleAddBook = jest.fn();
 
+// Mock `config.ts`
+jest.mock("@config", () => ({
+  API_URL: "https://mock-api.com", // Mocked API URL
+}));
+
+
 describe("BookListCard Component", () => {
   it("renders the book details correctly", () => {
     render(<BookListCard book={mockBook} handleAddBook={mockHandleAddBook} />);
@@ -77,5 +83,12 @@ describe("BookListCard Component", () => {
     // Check that "Unknown Author" is displayed
     const authorsElement = screen.getByTestId("book-authors");
     expect(authorsElement).toHaveTextContent("Authors: Unknown Author");
+  });
+
+  it("matches the snapshot", () => {
+    const { asFragment } = render(
+      <BookListCard book={mockBook} handleAddBook={mockHandleAddBook} isInLibrary={false} />
+    );
+    expect(asFragment()).toMatchSnapshot();
   });
 });
