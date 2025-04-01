@@ -1,6 +1,12 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import SearchBar from "./SearchBar";
 
+// Mock `config.ts`
+jest.mock("@config", () => ({
+  API_URL: "https://mock-api.com", // Mocked API URL
+}));
+
+
 describe("SearchBar Component", () => {
   const mockSetQuery = jest.fn();
   const mockHandleSearch = jest.fn();

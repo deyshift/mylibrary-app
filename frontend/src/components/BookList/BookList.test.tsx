@@ -21,6 +21,11 @@ const mockBooks = [
 
 const mockHandleAddBook = jest.fn();
 
+// Mock `config.ts`
+jest.mock("@config", () => ({
+  API_URL: "https://mock-api.com", // Mocked API URL
+}));
+
 describe("BookList Component", () => {
   it("renders the correct number of BookListCard components", () => {
     render(<BookList books={mockBooks} handleAddBook={mockHandleAddBook} />);

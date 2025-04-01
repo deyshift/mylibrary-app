@@ -20,7 +20,19 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true
+    "noUncheckedSideEffectImports": true,
+
+    /* Base URL and Paths */
+    "baseUrl": ".", // Set the base URL to the project root
+    "paths": {
+      "@config": ["config.ts"], // Alias for config.ts
+      "@src/*": ["src/*"] // Alias for everything in the src folder
+    }
   },
-  "include": ["src", "setupTests.ts"]
+  "include": [
+    "src", 
+    "setupTests.ts",
+    "src/vite-env.d.ts",
+    "config.ts"
+  ]
 }
