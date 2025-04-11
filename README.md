@@ -91,12 +91,22 @@ The frontend is built with TypeScript and utilizes the following technologies:
    source venv/bin/activate  # On Windows use `venv\Scripts\activate`
    ```
 
-3. Install the required Python packages:
+3. Create a .env file and add the following content:
+   ```sh
+   CORS_ORIGIN=http://localhost:3000
+   ```
+
+   Alternatively, rename the provided .env.example file to .env:
+   ```sh
+   mv .env.example .env
+   ```
+
+4. Install the required Python packages:
    ```sh
    pip install -r requirements.txt
    ```
 
-4. Run the backend server:
+5. Run the backend server:
    ```sh
    python app.py
    ```
@@ -113,14 +123,24 @@ The frontend is built with TypeScript and utilizes the following technologies:
    npm install
    ```
 
-3. Start the frontend server:
+3. Create a .env file and add the following content:
+   ```sh
+   VITE_API_URL=http://localhost:5001
+   ```
+
+   Alternatively, rename the provided .env.example file to .env:
+   ```sh
+   mv .env.example .env
+   ```
+
+4. Start the frontend server:
    ```sh
    npm start
    ```
 
 ## Usage
 
-1. Open your web browser and navigate to `http://localhost:5137`.
+1. Open your web browser and navigate to `http://localhost:5173`.
 2. Register for an account or log in if you already have one.
 3. Start adding and organizing your books.
 
