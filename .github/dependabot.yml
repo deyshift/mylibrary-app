@@ -1,0 +1,42 @@
+---
+# Dependabot configuration for automated security updates
+# This file enables Dependabot to monitor dependencies and create
+# pull requests for security updates
+
+version: 2
+updates:
+  # Monitor npm dependencies in frontend directory
+  - package-ecosystem: "npm"
+    directory: "/frontend"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    # Focus on security updates
+    open-pull-requests-limit: 10
+    reviewers:
+      - "deyshift"
+    assignees:
+      - "deyshift"
+    commit-message:
+      prefix: "security"
+      prefix-development: "deps"
+      include: "scope"
+
+  # Monitor pip dependencies in backend directory
+  - package-ecosystem: "pip"
+    directory: "/backend"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    # Focus on security updates
+    open-pull-requests-limit: 10
+    reviewers:
+      - "deyshift"
+    assignees:
+      - "deyshift"
+    commit-message:
+      prefix: "security"
+      prefix-development: "deps"
+      include: "scope"
